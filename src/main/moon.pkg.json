@@ -1,0 +1,6 @@
+{
+  "is-main": true,
+  "import": [
+    "ignacio/chess/lib"
+  ]
+}
