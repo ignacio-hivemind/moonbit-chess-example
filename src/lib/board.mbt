@@ -38,7 +38,7 @@ pub enum Piece {
     Bishop
     Queen
     King
-} derive(Show, Eq)
+} derive(Show, Eq, Hash)
 
 // =================================================================================================
 // 3: Type aliases: defining a new name for an existing type.
@@ -162,7 +162,7 @@ fn Board::initialize!() -> Board {
 // 8: New type definition: defining a new type based on an existing type.
 // =================================================================================================
 /// This is a new type that represents a turn in a chess game.
-pub type Turn Color
+pub type Turn Color derive(Show, Eq)
 
 /// This is a struct that represents the board state
 pub struct BoardState {
@@ -230,23 +230,34 @@ pub impl Drawable for Turn with draw(self: Turn) -> String {
   }
 }
 
+let pieceToString: Map[Piece, String] = Map::of([
+  (Piece::Pawn, "P"),
+  (Piece::Rook, "R"),
+  (Piece::Knight, "N"),
+  (Piece::Bishop, "B"),
+  (Piece::Queen, "Q"),
+  (Piece::King, "K")
+])
+
 /// Implement Drawable for BoardPlace
 pub impl Drawable for BoardPlace with draw(self: BoardPlace) -> String {
   match self {
-    Some((Piece::Pawn, Color::White)) => "P"
-    Some((Piece::Rook, Color::White)) => "R"
-    Some((Piece::Knight, Color::White)) => "N"
-    Some((Piece::Bishop, Color::White)) => "B"
-    Some((Piece::Queen, Color::White)) => "Q"
-    Some((Piece::King, Color::White)) => "K"
-    Some((Piece::Pawn, Color::Black)) => "p"
-    Some((Piece::Rook, Color::Black)) => "r"
-    Some((Piece::Knight, Color::Black)) => "n"
-    Some((Piece::Bishop, Color::Black)) => "b"
-    Some((Piece::Queen, Color::Black)) => "q"
-    Some((Piece::King, Color::Black)) => "k"
-    None => "."
+    None => "." // empty place
+    Some((piece, Color::White)) => pieceToString.get_or_default(piece, ".")
+    Some((piece, Color::Black)) => pieceToString.get_or_default(piece, ".").to_lower()
   }
+}
+
+test "boardplace draw function" {
+  let wp: BoardPlace = Some((Piece::Pawn, Color::White))
+  assert_eq!(wp.draw(), "P")
+  let bp: BoardPlace = Some((Piece::Pawn, Color::Black))
+  assert_eq!(bp.draw(), "p")
+
+  let wk: BoardPlace = Some((Piece::Knight, Color::White))
+  assert_eq!(wk.draw(), "N")
+  let bk: BoardPlace = Some((Piece::Knight, Color::Black))
+  assert_eq!(bk.draw(), "n")
 }
 
 /// Implement Drawable for Row
@@ -261,6 +272,12 @@ impl Drawable for Row with draw(self: Row) -> String {
 
 impl Paintable for Row with paint(self: Row) -> Unit {
   println("Row: " + self.draw())
+}
+
+pub fn abs(a: Int) -> Int {
+ let absolute: Int = if a >= 0 { a } else { -a }
+
+ return absolute
 }
 
 // =================================================================================================
