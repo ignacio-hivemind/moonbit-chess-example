@@ -7,11 +7,11 @@ Example for the article "Moonbit Language in 10 Features".
 To run the application type:
 
 ```
-moonbit run src/main
+moon run src/main
 ```
 
 To run all the tests:
 
 ```
-moonbit test
+moon test
 ```
